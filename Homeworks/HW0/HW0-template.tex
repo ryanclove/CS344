@@ -1,0 +1,164 @@
+\documentclass{article}
+
+\setlength{\headsep}{0.75 in}
+\setlength{\parindent}{0 in}
+\setlength{\parskip}{0.1 in}
+
+%=====================================================
+% Add PACKAGES Here (You typically would not need to):
+%=====================================================
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amsthm}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+
+%=====================================================
+% Ignore This Part (But Do NOT Delete It:)
+%=====================================================
+
+\theoremstyle{definition}
+\newtheorem{problem}{Problem}
+\newtheorem*{fun}{Fun with Algorithms}
+\newtheorem*{challenge}{Challenge Yourself}
+\def\fline{\rule{0.75\linewidth}{0.5pt}}
+\newcommand{\finishline}{\begin{center}\fline\end{center}}
+\newtheorem*{solution*}{Solution}
+\newenvironment{solution}{\begin{solution*}}{{\finishline} \end{solution*}}
+\newcommand{\grade}[1]{\hfill{\textbf{($\mathbf{#1}$ points)}}}
+\newcommand{\thisdate}{\today}
+\newcommand{\thissemester}{\textbf{Rutgers: Spring 2021}}
+\newcommand{\thiscourse}{CS 344: Design and Analysis of Computer Algorithms} 
+\newcommand{\thishomework}{Number} 
+\newcommand{\thisname}{Name} 
+\newcommand{\thisextension}{Yes/No} 
+
+\headheight 40pt              
+\headsep 10pt
+\renewcommand{\headrulewidth}{0pt}
+\lhead{\small \textbf{Only for the personal use of students registered in CS 344, Spring 2021 at Rutgers University. Redistribution out of this class is strictly prohibited.}}
+\pagestyle{fancy}
+
+\newcommand{\thisheading}{
+   \noindent
+   \begin{center}
+   \framebox{
+      \vbox{\vspace{2mm}
+    \hbox to 6.28in { \textbf{\thiscourse \hfill \thissemester} }
+       \vspace{4mm}
+       \hbox to 6.28in { {\Large \hfill Homework \#\thishomework \hfill} }
+       \vspace{2mm}
+         \hbox to 6.28in { { \hfill Deadline: Monday, January 25, 11:59 PM  \hfill} }
+       \vspace{2mm}
+       \hbox to 6.28in { \emph{Name: \thisname \hfill Extension: \thisextension}}
+      \vspace{2mm}}
+      }
+   \end{center}
+   \bigskip
+}
+
+%=====================================================
+% Some useful MACROS (you can define your own in the same exact way also)
+%=====================================================
+
+
+\newcommand{\ceil}[1]{{\left\lceil{#1}\right\rceil}}
+\newcommand{\floor}[1]{{\left\lfloor{#1}\right\rfloor}}
+\newcommand{\prob}[1]{\Pr\paren{#1}}
+\newcommand{\expect}[1]{\Exp\bracket{#1}}
+\newcommand{\var}[1]{\textnormal{Var}\bracket{#1}}
+\newcommand{\set}[1]{\ensuremath{\left\{ #1 \right\}}}
+\newcommand{\poly}{\mbox{\rm poly}}
+
+
+%=====================================================
+% Fill Out This Part With Your Own Information:
+%=====================================================
+
+
+\renewcommand{\thishomework}{0} %Homework number
+\renewcommand{\thisname}{Ryan Coslove} % Enter your name here
+\renewcommand{\thisextension}{No} % Pick only one of the two options accordingly
+
+\begin{document}
+
+\thisheading
+
+The entire goal of this ``homework'' is to help you get familiar with LaTeX. This homework only has \textbf{bonus credit} for a total of $2\%$ of your  course grade. 
+
+\finishline
+
+
+\begin{problem}
+	Enter your first and last name and whether or not you are using an extension at the top of this page in the specified place. \grade{+20} 
+\end{problem}
+%=====================================================
+% LaTeX Tip: Write your solutions for each problem in a solution environment, i.e., between a \begin{solution} and \end{solution} command. You should define this command write AFTER the problem statement
+% which itself is in a problem environment. 
+%=====================================================	
+\begin{solution}
+
+	Change the text written as ``FIRST LAST'' in the command 
+	
+	``\textbackslash renewcommand\{\textbackslash thisname\}\{FIRST LAST\}'' 
+	
+	``\textbackslash renewcommand\{\textbackslash thisextension\}\{Yes/No\}'' 
+	
+	a couple of lines above here. 
+
+%=====================================================
+% LaTeX Tip: By leaving one or multiple lines blank in your LaTeX code, you will get a single line break in the compiled pdf. If you like to increase
+% the distance, as in the following example, use one of \smallskip \medskip or \bigskip command before the new line. Note that for this to work, you still need to leave one line blank as well.  
+%=====================================================
+\end{solution}
+
+\begin{problem}
+	Write the math expression $\lim_{n \rightarrow +\infty} \frac{n}{n^2} = 0$ in a single separate line instead.   \grade{+40} 
+\end{problem}
+
+\begin{solution} 
+	%=====================================================
+	% LaTeX Tip: The command \[ \] below is used to display SINGLE line math expressions (but out of the text unlike $ $ command). 
+	%=====================================================
+	\[
+		\lim_{n \rightarrow +\infty} \frac{n}{n^2} = 0 
+	\]
+\end{solution}
+
+\begin{problem}
+	Rewrite the following lengthy math expression
+	\[
+		\sum_{i=0}^{n} 2^i = 1 + 2 + \cdots + 2^n = \frac{2^{n+1}-1}{2-1} = 2^{n+1}-1 = 2 \cdot 2^n - 1,
+	\]
+	into multiple lines using the following format:
+		%=====================================================
+		% LaTeX Tip: The environment align* below, i.e., between \begin{align*} and \end{align*} is used to display MULTI line math expressions. 
+		% Using & in the align* environment would align the two expressions on the place of & (try compiling the code by removing or replacing &). In general, even though more than one & sign 
+		% can technically be used in an align environment, it is suggested that you stick to using at most one & per line for now. One thing to remember this environment is that you cannot leave 
+		% any empty line inside it (if you want to make a new line, use \\ instead). 
+		%=====================================================
+	\begin{align*}
+		\text{Expression 1} &= \text{Expression 2} \\
+		&= \text{Expression 3} \\
+		&= \text{Expression 4} \\
+		&= \text{Expression 5}. 
+	\end{align*}   \grade{+40} 
+\end{problem}
+
+\begin{solution} 
+
+	\begin{align*}
+		\sum_{i=0}^{n} 2^i &= 1 + 2 + \cdots + 2^n \\
+		&= \frac{2^{n+1}-1}{2-1} \\
+		&= 2^{n+1}-1 \\
+		&= 2 \cdot 2^n - 1. 
+	\end{align*}   \grade{+40} 
+\end{solution}
+
+
+\end{document}
+
+
+
+
+

@@ -1,0 +1,305 @@
+\documentclass{article}
+
+\setlength{\headsep}{0.75 in}
+\setlength{\parindent}{0 in}
+\setlength{\parskip}{0.1 in}
+
+%=====================================================
+% Add PACKAGES Here (You typically would not need to):
+%=====================================================
+
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{graphicx}
+\usepackage{xspace}
+\usepackage{subcaption}
+
+%=====================================================
+% Ignore This Part (But Do NOT Delete It:)
+%=====================================================
+
+\theoremstyle{definition}
+\newtheorem{problem}{Problem}
+\newtheorem*{fun}{Fun with Algorithms}
+\newtheorem*{challenge}{Challenge Yourself}
+\def\fline{\rule{0.75\linewidth}{0.5pt}}
+\newcommand{\finishline}{\begin{center}\fline\end{center}}
+\newtheorem*{solution*}{Solution}
+\newenvironment{solution}{\begin{solution*}}{{\finishline} \end{solution*}}
+\newcommand{\grade}[1]{\hfill{\textbf{($\mathbf{#1}$ points)}}}
+\newcommand{\thisdate}{\today}
+\newcommand{\thissemester}{\textbf{Rutgers: Spring 2021}}
+\newcommand{\thiscourse}{CS 344: Design and Analysis of Computer Algorithms} 
+\newcommand{\thishomework}{Number} 
+\newcommand{\thisname}{Name} 
+\newcommand{\thisextension}{Yes/No} 
+
+\headheight 40pt              
+\headsep 10pt
+\renewcommand{\headrulewidth}{0pt}
+\lhead{\small \textbf{Only for the personal use of students registered in CS 344, Spring 2021 at Rutgers University. Redistribution out of this class is strictly prohibited.}}
+\pagestyle{fancy}
+
+\newcommand{\thisheading}{
+   \noindent
+   \begin{center}
+   \framebox{
+      \vbox{\vspace{2mm}
+    \hbox to 6.28in { \textbf{\thiscourse \hfill \thissemester} }
+       \vspace{4mm}
+       \hbox to 6.28in { {\Large \hfill Homework \#\thishomework \hfill} }
+       \vspace{2mm}
+         \hbox to 6.28in { { \hfill Deadline: Monday, May 03, 11:59 PM  \hfill} }
+      \vspace{2mm}
+       \hbox to 6.28in { \emph{Name: \thisname \hfill Extension: \thisextension}}
+      \vspace{2mm}}
+      }
+   \end{center}
+   \bigskip
+}
+
+%=====================================================
+% Some useful MACROS (you can define your own in the same exact way also)
+%=====================================================
+
+
+\newcommand{\ceil}[1]{{\left\lceil{#1}\right\rceil}}
+\newcommand{\floor}[1]{{\left\lfloor{#1}\right\rfloor}}
+\newcommand{\prob}[1]{\Pr\paren{#1}}
+\newcommand{\expect}[1]{\Exp\bracket{#1}}
+\newcommand{\var}[1]{\textnormal{Var}\bracket{#1}}
+\newcommand{\set}[1]{\ensuremath{\left\{ #1 \right\}}}
+\newcommand{\poly}{\mbox{\rm poly}}
+
+
+%=====================================================
+% Fill Out This Part With Your Own Information:
+%=====================================================
+
+
+\renewcommand{\thishomework}{5} %Homework number
+\renewcommand{\thisname}{Ryan Coslove} % Enter your name here
+\renewcommand{\thisextension}{No} % Pick only one of the two options accordingly
+
+\begin{document}
+
+\thisheading
+\vspace{-0.75cm}
+\subsection*{Homework Policy}
+\begin{itemize}
+\item If you leave a question completely blank, you will receive 25\% of the grade for that question. This however does not apply to the extra credit questions.
+\item You are allowed to discuss the homework problems with other students in the class. \textbf{But you must write your solutions independently.} 
+You may also consult all the materials used in this course (video recordings, notes, textbook, etc.) while writing your solution, but no other resources are allowed.
+\item Do not forget to write down your name and whether or not you are using one of your two extensions. Submit your homework on Canvas. 
+\item Unless  specified otherwise, you may use any algorithm covered in class as a ``black box'' -- for example you can simply write ``use Ford-Fulkerson's algorithm to find a maximum flow of the input network in $O(m \cdot F)$ time''. 
+You are \textbf{strongly encouraged to use graph reductions} instead of designing an algorithm from scratch whenever possible (even when the question does not ask you to do so explicitly). 
+
+\item Remember to always \textbf{prove the correctness} of your algorithms and \textbf{analyze their running time} (or any other efficiency measure asked in the question). 
+
+\item The ``Challenge yourself'' and ``Fun with algorithms''  are both extra credit. These problems are significantly more challenging than the standard problems you see in this course (including lectures, homeworks, and exams). 
+As a general rule, only attempt to solve these problems if you  enjoy them. 
+\end{itemize}
+
+\finishline
+
+\begin{problem}
+	You are given an $n \times n$ matrix and a set of $k$ cells $(i_1,j_1),\ldots,(i_k,j_k)$ on this matrix. We say that this set of cells can \textbf{escape} the matrix if: (1) we can find a path from each cell to any arbitrary \emph{boundary cell} of the matrix 
+	(a path is a sequence of \emph{neighboring} cells, namely, top, bottom, left, and right), (2) these paths are all \emph{disjoint},  namely, no cell is used in more than one of these paths. 
+	
+
+Design an $O(n^3)$ time algorithm that given the matrix and the input cells, determines whether these cells can escape the matrix (together) or not. 
+\grade{25}
+
+\end{problem}
+
+\begin{solution}
+	\item We do not want paths from a highlighted cell to intersect with another path. For the purpose of this problem, we can assume the graph/matrix has intersections as nodes and their connections as edges. We can assume all highlighted cells are at the corners of the intesections.
+	\item We will model using max flow. The edges will hold a capacity value of 1. Source node has edges to each highlighted cell/node with capacity 1. Edges from boundary nodes to the sink will hold capacity 1. Set an array $C[1:n]$ that will contain all existing paths.
+	\item We have a solution if and only if the max flow equals the number of highlighted cells. 
+	\item\begin{itemize}
+		\item Can assume flow is $\{0, 1\}$ on each edge by Ford-Fulkerson
+		\item Flow on each edge $(s, u)$ gives a path from $u$ to the boundary
+		\begin{itemize}
+			\item flow into $u$ on $(s, u)$ leaves on some edge $(u, v)$
+			\item flow into $v$ on $(u, v)$ leaves on some edge $(v, w)$
+			\item can only stop with an edge $(z, t)$ and $z$ us a boundary node by construction
+			\end{itemize}
+		\item two paths using the same edge would violate edge capacity
+	\end{itemize}
+	\item Because two paths could use the same intersection at its current state, we will implement node capacity constraints. 
+	\item So consider any node:
+		\item\begin{itemize}
+		\item split it into two parts
+		\item one part for incoming edges and one for outgoing edges
+		\item add edge between them with capacity for the node $C_n$
+		\end{itemize}
+	\item All flow through the node now goes through this internal edge. That allows us to limit the total flow using the node because node balance constraint is preserved.
+	\item Once a successful path is created we are to store is in the array $C[1:n]$. If a path is created that is duplicated/already exists in C will we remove the path we are checking.
+	\item So we have a solution, can the cells escape the matrix or not, if and only if the max flow equals the number of highlighted cells/nodes.
+	\item If this statement is true and contains a solution, we output true or "yes". Otherwise we output false or "no".
+
+	\item\textbf{Proof of Correctness}
+	\item  We already proved the paths must be edge-disjoint and the node capacity means paths must be node-disjoint as well, so we should never output a solution to be true that contains overlapping paths. We only output yes if and only if the max flow equals the number of highlighted cells. AKA every solution corresponds to a flow of the number of highlighted cells. Also every 0/1 flow of the number of highlighted cells encodes escape paths for all highlighted cells. 
+
+	\item\textbf{Runtime}
+	\item We know that Ford Fulkerson runs in $O(nm)$ time, or in this case $O(n*n)$ time. Running the for loop to check for duplicate paths in array C will take $O(n)$ time. Together, we have a total runtime of $O(n^3)$.
+
+\end{solution}
+
+\bigskip
+
+
+\begin{problem}
+	You are given an undirected \emph{bipartite} graph $G$ where $V$ can be partitioned into $L \cup R$ and every edge in $G$ is between a vertex in $L$ and a vertex in $R$. 
+	For any integers $p,q \geq 1$, a \emph{$(p,q)$-factor} in $G$ is any subset of edges $M \subseteq E$ such that no vertex in $L$ is shared in more than $p$ edges of $M$ and no vertex in $R$ is shared in more than $q$ edges of $M$. 
+	
+Design an $O((m+n) \cdot n \cdot (p+q))$ time algorithm for outputting the size of the \emph{largest} $(p,q)$-factor of any given bipartite graph. 
+		
+\grade{25}
+
+\end{problem}
+
+\begin{solution}
+	Solution to Problem 2 goes here.
+\end{solution}
+
+\begin{problem}\label{prob}
+ 	Given an undirected graph $G=(V,E)$ and an integer $k \geq 2$, a $k$-coloring of $G$ is an assignment of $k$ colors to the vertices of $V$ such that no edge in $E$ has the same color on both its endpoints. 
+	
+	
+	\begin{itemize}
+		\item[(a)] Design a poly-time \emph{algorithm for solving} the decision version of the $2$-coloring problem: Given a graph $G=(V,E)$ output \emph{Yes} if $G$ has a $2$-coloring and \emph{No} if it does not. \grade{15}
+		
+\begin{solution}
+	\item Let's use BFS to check if the given graph is Bipartite or not. Knowing if the graph is biparitite we can know if the graph will be 2-color based on its edges and connections. 
+	\item\begin{enumerate}
+		\item Assign RED color to the source vertex (putting into set U)
+		\item Color all the neighbors with BLUE color (putting into set V). 
+		\item Color all neighbor’s neighbor with RED color (putting into set U). 
+		\item This way, assign color to all vertices such that it satisfies all the constraints of $m$ way coloring problem where $m = 2$. 
+		\item While assigning colors, if we find a neighbor which is colored with same color as current vertex, then the graph cannot be colored with 2 vertices (or graph is not Bipartite) 
+	\end{enumerate}
+	\item If we find a neighbor with the same color as the current vertex, output $NO$. If conditions are satsified and we find  a 2-coloring graph, output $YES$.
+
+\item\textbf{Proof of Correctness}
+	\item In the above, we start with source 0 and assume that all vertices are visited from it. In the event the current vertex has the same color as one of its neighbors, we know the graph is not 2-color or bipartite. We also output YES or NO appropriately so it answers the polytime algorithm decision aspect for this problem.
+
+\item\textbf{Runtime}
+	\item Time Complexity of the above approach is same as that Breadth First Search. In above implementation is $O(V^2)$ where V is number of vertices. If graph is represented using adjacency list, then the complexity becomes $O(V+E)$. If Graph is represented using Adjacency List, time complexity will be $O(V+E)$. Works for connected as well as disconnected graph.
+
+\end{solution}
+
+		\medskip
+		
+		\item[(b)] Design a poly-time \emph{verifier} for the decision version of the $k$-coloring problem for any $k \geq 2$: Given a graph $G=(V,E)$ and $k$ as input, output \emph{Yes} if $G$ has a $k$-coloring and \emph{No} if it does not. Remember to specify exactly what type of a proof you need 
+		for your verifier. \grade{10}
+		
+\begin{solution}
+	\item We can use part (a) as the algorithm that finds a 2-coloring graph or not to output yes or no. We can use this is a verifier:
+	\item If the graph is 2-colorable, we can simply use any 2-coloring of the graph as a proof. So the input to our verifier is the input graph G and a supposed 2-coloring of $G$ (here $G$ is the input $x$ and the 2-coloring is the proof $y$).  The verifier then goes over the edges of $G$ one by one to ensure that no edge is monochromatic.
+	\item If the verifier returns that x = y, proving that no edge is monochromatic, then we return $YES$ as G is k-coloring (where $k \geq 2$). Otherwise, return $NO$.
+\end{solution}
+
+	\end{itemize}
+\end{problem}
+
+
+
+
+\bigskip
+
+
+\begin{problem}
+Prove that each of the following problems is NP-hard and for each problem determine whether it is also NP-complete or not. 
+
+\begin{enumerate}[label=(\alph*)]
+	\item \textbf{One-Fourth-Path Problem:} Given an undirected graph $G=(V,E)$, does $G$ contain a path that passes through \emph{at least one forth}  of the vertices in $G$?  \grade{8}
+
+\begin{solution}
+	\item Our Problem I is finding a path in $G$ that passes through at least one fourth of the vertices. We can prove this is NP-Hard through the implication that if Problem II has a poly-time algorithm we can obtain a poly-time algorithm for all problems in NP. We will wanna use the Hamiltonian Cycle Problem as our problem II. Through this problem we can find a path or cycle that goes through evey vertex in G and we already know this problem to be NP-Hard. So in the event our Problem II outputs a path $n$ that reaches all vertices, we can do $n/4$ and find the value/path that is (roughly) equal to 1/4 of all vertices in the graph. This gives us at least 1 path in G that is $\geq 1/4$, which is the answer we sought for a $yes$, and because Problem II was NP-Hard and is verified to be in poly-time we can infer that Problem I was NP-Hard and runs in poly-time.
+	\item This is also a deicision problem, "does G contain a path...". We know it is NP-Hard and fits within the NP class. Therefore it is NP-Complete. 
+\end{solution}
+
+	\item \textbf{Two-Third 3-SAT Problem:} Given a 3-CNF formula $\Phi$ (in which size of each clause is \emph{at most} $3$), is there an assignment to the variables that satisfies at least $2/3$ of the clauses?  \grade{8}
+
+\begin{solution}
+	\item Our Problem I is finding an assignment to the variables that satisfies at least 2/3 of the clauses. We can prove this is NP-Hard through the implication that if Problem II has a poly-time algorithm we can obtain a poly-time algorithm for all problems in NP. We will wanna use the 3-SAT Problem as our Problem II. Through this problem we can find that finds an a satisfying assignment $y$ such that $\phi(y) = 1$ or not. This is proven in lecture to work and be NP-Hard. So in the event our Problem II outputs a satisfied $\phi$ we can determine that Problem I should produce a satisfied $\phi\ $ where at least 2/3 of the clauses are satisfied. This gives us a satisfied $\phi $ which is the answer we sought for a $yes$, and because Problem II was NP-Hard and is verified to be in poly-time we can infer that Problem I was NP-Hard and runs in poly-time.
+	\item This is also a deicision problem, "is there an assignment...". We know it is NP-Hard and fits within the NP class. Therefore it is NP-Complete.
+\end{solution}
+
+	 \item \textbf{Negative-Weight Shortest Path Problem:} Given an undirected graph $G=(V,E)$, two vertices $s,t$ and \emph{negative} weights on the edges, what is the weight of the shortest path from $s$ to $t$? \grade{9}
+	 
+\begin{solution}
+	\item Our Problem I is finding the weight of the shortest path from $s$ to $t$ in $G$. We can prove this is NP-Hard through the implication that if Problem II has a poly-time algorithm we can obtain a poly-time algorithm for all problems in NP. We will wanna use the Hamiltonian Path Problem as our problem II. Through this problem we can find a path or cycle that goes through evey vertex in G and we already know this problem to be NP-Hard. Let's add a weight of $-1$ to all edges. If we find a path from $s$ to $t$ that has a weight of $n-1$, then we know it includes all nodes. Otherwise, there is no path because we would have found it given the negative weights. So in the event our Problem II outputs a path with weight $n-1$, we can find the minimum weight path in G that is the shortest path, which is the answer we sought for. Because Problem II was NP-Hard and is verified to be in poly-time we can infer that Problem I was NP-Hard and runs in poly-time.
+	\item This is NOT a decision problem as it asks for a weight as the output, so it is NOT NP-Complete.
+\end{solution}
+
+\end{enumerate}
+
+You may assume the following problems are NP-hard for your reductions: 
+\begin{itemize}
+	\item \textbf{Undirected $s$-$t$ Hamiltonian Path:} Given an undirected graph $G=(V,E)$ and two vertices $s,t \in V$, is there a Hamiltonian path from $s$ to $t$ in $G$? (A Hamiltonian path is a path that passes every vertex). 
+	\item \textbf{3-SAT Problem:} Given a 3-CNF formula $\Phi$  (where each clause as \emph{at most} $3$ variables), is there an assignment to $\Phi$ that makes it true?
+\end{itemize}
+
+\end{problem}
+
+\finishline
+
+
+\begin{fun}
+	You are given a puzzle consists of an $m \times n$ grid of squares, where each
+square can be empty, occupied by a red stone, or occupied by a blue stone. The goal of the puzzle
+is to remove some of the given stones so that the remaining stones satisfy two conditions: (1) every row contains at least one stone,
+and (2) no column contains stones of both colors. 
+
+It is easy to see that for some initial configurations of stones, reaching this goal is impossible. 
+We define the Puzzle problem as follows. Given an initial configuration of red and blue stones on an $m \times n$ grid of squares,
+determine whether or not the puzzle instance has a feasible solution. 
+
+Prove that the Puzzle problem is NP-complete. \grade{+10}
+\end{fun}
+
+
+
+Consider solving \textbf{at most one} of the following two challenge yourself problems. 
+
+\bigskip
+
+\begin{challenge}[\textbf{I}] 
+	The goal of this question is to give a simple proof that there are decision problems that admit \emph{no} algorithm at all (independent of the runtime of the algorithm). 
+	
+	Define $\Sigma^+$ as the set of all \emph{binary} strings, i.e., $\Sigma^{+} = \set{0,1,00,01,10,11,000,001,\ldots}$. Observe that any decision problem $\Pi$ can be identified by a function $f_{\Pi} : \Sigma^{+} \rightarrow \set{0,1}$. 
+	Moreover, observe that any algorithm can be identified with a binary string in $\Sigma^{+}$. Use this to argue that ``number'' of algorithms is ``much smaller'' than ``number'' of decision problems and hence there should be some decision problems
+	that cannot be solved by any algorithm. 
+	
+	\emph{Hint:} Note that in the above argument you have to be careful when comparing ``number'' of algorithms and decision problems: after all, they are both infinity! Use the fact that \emph{cardinality} of the set of real numbers $\mathbb{R}$ is larger than the cardinality of integer numbers $\mathbb{N}$ (if you have never seen the notion of cardinality of an infinite set before, you may want to skip this problem).  \grade{+10}
+	
+\end{challenge}
+
+\bigskip
+
+\begin{challenge}[\textbf{II}] 
+	Recall that in the class, we  focused on \emph{decision} problems when defining NP. Solving a decision problem simply tells us whether a solution to our problem exists or not but  it does not provide that solution when it 
+	exists. Concretely, let us consider the 3-SAT problem on an input formula $\Phi$. Solving 3-SAT on $\Phi$ would  tell us whether $\Phi$ is satisfiable or not but will not give us a satisfying assignment when $\Phi$ is satisfiable. 
+	What if our goal is to actually find the satisfying formula when one exists? This is called a \emph{search} problem. 
+	
+	It is easy to see that a search problem can only be ``harder'' than its decision variant, or in other words, if we have an algorithm for the search problem we will obtain an algorithm for the decision problem as well. Interestingly, the converse 
+	of this is also true for all NP problems and we will prove this in the context of the 3-SAT problem in this problem. In particular, we reduce the 3-SAT-SEARCH problem (the problem of finding a satisfying assignment to a 3-CNF formula) 
+	to the 3-SAT (decision) problem (the problem of deciding whether a 3-CNF formula has a satisfying assignment or not). 
+	
+	Suppose you are given, as a black-box, an algorithm $A$ for solving 3-SAT (decision) problem that runs in polynomial time. Use $A$ to design a poly-time algorithm that given a 3-CNF formula $\Phi$, either outputs $\Phi$ is not satisfiable or 
+	\emph{finds} an assignment $x$ such that $\Phi(x) = True$. \grade{+10}
+\end{challenge}
+
+\end{document}
+
+
+
+
+
