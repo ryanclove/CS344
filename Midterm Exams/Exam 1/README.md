@@ -1,3 +1,3 @@
 # Exam 1
 
-my submission and solution
+my submission and the solutions
